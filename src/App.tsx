@@ -8,16 +8,16 @@ interface Movie {
 }
 
 export default function App() {
-    const [rawMovieData, setRawMovieData] = useState<Movie[]>([]);
     const [moviesArray, setMoviesArray] = useState<Movie[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const getRawMovieData = async () => {
+    const getMovieData = async () => {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
         const json = await resp.json();
-        setRawMovieData(json);
+        generateMoviesArray(json);
     };
 
-    const generateMoviesArray = () => {
+    const generateMoviesArray = (data: Movie[]) => {
         const numbers: number[] = [];
         const movies: Movie[] = [];
 
@@ -30,9 +30,7 @@ export default function App() {
         }
 
         numbers.forEach((number) => {
-            const targetMovie = rawMovieData.find(
-                (movie) => movie.id === number
-            );
+            const targetMovie = data.find((movie) => movie.id === number);
             if (targetMovie !== undefined) {
                 movies.push(targetMovie);
             }
@@ -42,12 +40,12 @@ export default function App() {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            await getRawMovieData();
-        };
-        fetchData();
-        generateMoviesArray();
+        getMovieData();
+        setIsLoading(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    if (isLoading) return <div>Loading...</div>;
 
     return <div>{JSON.stringify(moviesArray)}</div>;
 }
