@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
+import RoundIndicator from './components/RoundIndicator';
+import Card from './components/Card';
 
 interface Movie {
     id: number;
@@ -12,7 +14,7 @@ export default function App() {
     const [moviesArray, setMoviesArray] = useState<Movie[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
-    const [currentRoundCards, setCurrentRoundCards] = useState<Movie[]>([]);
+    const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
 
     const getMovieData = async () => {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
@@ -66,17 +68,17 @@ export default function App() {
         }
 
         setMoviesArray(movies);
-        getCurrentRoundCards(movies);
+        getCurrentRoundMovies(movies);
     };
 
-    const getCurrentRoundCards = (movies: Movie[]) => {
+    const getCurrentRoundMovies = (movies: Movie[]) => {
         const currentCards: Movie[] = [];
 
         for (let i = 0; i <= round; i++) {
             currentCards.push(movies[i]);
         }
 
-        setCurrentRoundCards(currentCards);
+        setCurrentRoundMovies(currentCards);
     };
 
     useEffect(() => {
@@ -87,13 +89,13 @@ export default function App() {
     if (isLoading) return <div>Loading...</div>;
 
     return (
-        <div>
-            {currentRoundCards.map((card) => (
-                <div key={card.id}>
-                    <div>{card.title}</div>
-                    <img src={card.posterURL} />
+        <>
+            <RoundIndicator round={round} />
+            {currentRoundMovies.map((movie) => (
+                <div key={movie.id}>
+                    <Card title={movie.title} posterURL={movie.posterURL} />
                 </div>
             ))}
-        </div>
+        </>
     );
 }
