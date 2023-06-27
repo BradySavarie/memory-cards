@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
+import Scorecard from './components/Scorecard';
+import Timer from './components/Timer';
 import RoundIndicator from './components/RoundIndicator';
 import Card from './components/Card';
 
@@ -15,6 +17,8 @@ export default function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
     const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
+    const [currentScore, setCurrentScore] = useState<number>(0);
+    const [bestScore, setBestScore] = useState<number>(0);
 
     const getMovieData = async () => {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
@@ -90,6 +94,10 @@ export default function App() {
 
     return (
         <>
+            <Scorecard
+                currentScore={currentScore}
+                bestScore={bestScore}
+            ></Scorecard>
             <RoundIndicator round={round} />
             {currentRoundMovies.map((movie) => (
                 <div key={movie.id}>
