@@ -1,13 +1,15 @@
+import { Movie } from '../App';
+
 interface CardProps {
-    title: string;
-    posterURL: string;
+    selectMovie: (movie: Movie) => void;
+    movie: Movie;
 }
 
 const Card = (props: CardProps) => {
     return (
-        <div>
-            <p>{props.title}</p>
-            <img src={props.posterURL} />
+        <div onClick={() => props.selectMovie(props.movie)}>
+            <p>{props.movie.title}</p>
+            <img src={props.movie.posterURL} />
         </div>
     );
 };

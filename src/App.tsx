@@ -5,7 +5,7 @@ import Timer from './components/Timer';
 import RoundIndicator from './components/RoundIndicator';
 import Card from './components/Card';
 
-interface Movie {
+export interface Movie {
     id: number;
     title: string;
     posterURL: string;
@@ -13,12 +13,16 @@ interface Movie {
 }
 
 export default function App() {
-    const [moviesArray, setMoviesArray] = useState<Movie[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
     const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [bestScore, setBestScore] = useState<number>(0);
+    const [roundPoints, setRoundPoints] = useState<number>(0);
+    const [currentlySelectedMovies, setCurrentlySelectedMovies] = useState<
+        Movie[]
+    >([]);
+    const [gameOver, setGameOver] = useState<boolean>(false);
 
     const getMovieData = async () => {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
@@ -71,7 +75,6 @@ export default function App() {
             }
         }
 
-        setMoviesArray(movies);
         getCurrentRoundMovies(movies);
     };
 
@@ -85,10 +88,38 @@ export default function App() {
         setCurrentRoundMovies(currentCards);
     };
 
+    const selectMovie = (selection: Movie) => {
+        const containsSelection = currentlySelectedMovies.some(
+            (movie) => movie.id === selection.id
+        );
+        if (containsSelection === false) {
+            setCurrentlySelectedMovies((prevState: Movie[]) => [
+                ...prevState,
+                selection,
+            ]);
+        } else {
+            setGameOver(true);
+        }
+    };
+
+    const incrementRound = () => {
+        if (round < currentlySelectedMovies.length) {
+            setRound((prevState) => prevState + 1);
+            console.log('round incremented');
+        }
+    };
+
     useEffect(() => {
         getMovieData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (gameOver === true) {
+            console.log('game over');
+        }
+        incrementRound();
+    });
 
     if (isLoading) return <div>Loading...</div>;
 
@@ -101,7 +132,7 @@ export default function App() {
             <RoundIndicator round={round} />
             {currentRoundMovies.map((movie) => (
                 <div key={movie.id}>
-                    <Card title={movie.title} posterURL={movie.posterURL} />
+                    <Card selectMovie={selectMovie} movie={movie} />
                 </div>
             ))}
         </>
