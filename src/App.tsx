@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import Scorecard from './components/Scorecard';
-import Timer from './components/Timer';
 import RoundIndicator from './components/RoundIndicator';
 import Card from './components/Card';
 
@@ -15,6 +14,7 @@ export interface Movie {
 export default function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
+    const [currentGameMovies, setCurrentGameMovies] = useState<Movie[]>([]);
     const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [bestScore, setBestScore] = useState<number>(0);
@@ -24,11 +24,11 @@ export default function App() {
     >([]);
     const [gameOver, setGameOver] = useState<boolean>(false);
 
-    const getMovieData = async () => {
+    const initMovieData = async () => {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
         const json = await resp.json();
         const cleanData = await cleanMoviesData(json);
-        generateMoviesArray(cleanData);
+        getCurrentGameMovies(cleanData);
         setIsLoading(false);
     };
 
@@ -49,16 +49,14 @@ export default function App() {
                 await loadImage(movie.posterURL);
                 cleanedData.push(movie);
             } catch (error) {
-                console.error(
-                    `Failed to load image for movie with ID ${movie.id}`
-                );
+                /* errors expected due to api containing broken urls */
             }
         }
 
         return cleanedData;
     };
 
-    const generateMoviesArray = (data: Movie[]) => {
+    const getCurrentGameMovies = (data: Movie[]) => {
         const numbers: number[] = [];
         const movies: Movie[] = [];
 
@@ -74,18 +72,49 @@ export default function App() {
                 movies.push(targetMovie);
             }
         }
-
+        setCurrentGameMovies(movies);
         getCurrentRoundMovies(movies);
     };
 
     const getCurrentRoundMovies = (movies: Movie[]) => {
-        const currentCards: Movie[] = [];
+        const currentMovies: Movie[] = [];
 
         for (let i = 0; i <= round; i++) {
-            currentCards.push(movies[i]);
+            currentMovies.push(movies[i]);
         }
 
-        setCurrentRoundMovies(currentCards);
+        setCurrentRoundMovies(currentMovies);
+    };
+
+    const updateCurrentRoundMovies = () => {
+        const numbers: number[] = [];
+        const updatedCurrentRoundMovies: Movie[] = [...currentRoundMovies];
+
+        for (let i = 1; i <= currentGameMovies.length; i++) {
+            numbers.push(i);
+        }
+        const shuffledNumbers = _.shuffle(numbers);
+
+        for (
+            let i = 0;
+            updatedCurrentRoundMovies.length === currentRoundMovies.length;
+            i++
+        ) {
+            const targetId = shuffledNumbers[i];
+            const targetMovie = currentRoundMovies.some(
+                (movie) => movie.id === targetId
+            );
+            if (targetMovie === false) {
+                const newMovie = currentGameMovies.find(
+                    (movie) => movie.id === targetId
+                );
+                if (newMovie !== undefined) {
+                    updatedCurrentRoundMovies.push(newMovie);
+                }
+            }
+        }
+        const shuffledMovies = _.shuffle(updatedCurrentRoundMovies);
+        setCurrentRoundMovies(shuffledMovies);
     };
 
     const selectMovie = (selection: Movie) => {
@@ -102,24 +131,29 @@ export default function App() {
         }
     };
 
-    const incrementRound = () => {
-        if (round < currentlySelectedMovies.length) {
-            setRound((prevState) => prevState + 1);
-            console.log('round incremented');
-        }
+    const nextRound = () => {
+        setRound((prevState) => prevState + 1);
+        updateCurrentRoundMovies();
+        setCurrentlySelectedMovies([]);
+        console.log('round incremented');
     };
 
     useEffect(() => {
-        getMovieData();
+        initMovieData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (round < currentlySelectedMovies.length) {
+            nextRound();
+        }
+    });
 
     useEffect(() => {
         if (gameOver === true) {
             console.log('game over');
         }
-        incrementRound();
-    });
+    }, [gameOver]);
 
     if (isLoading) return <div>Loading...</div>;
 
