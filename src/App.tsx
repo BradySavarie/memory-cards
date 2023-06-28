@@ -14,11 +14,11 @@ export interface Movie {
 export default function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
+    const [cleanMovieData, setCleanMovieData] = useState<Movie[]>([]);
     const [currentGameMovies, setCurrentGameMovies] = useState<Movie[]>([]);
     const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [bestScore, setBestScore] = useState<number>(0);
-    const [roundPoints, setRoundPoints] = useState<number>(0);
     const [currentlySelectedMovies, setCurrentlySelectedMovies] = useState<
         Movie[]
     >([]);
@@ -28,6 +28,7 @@ export default function App() {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
         const json = await resp.json();
         const cleanData = await cleanMoviesData(json);
+        setCleanMovieData(cleanData);
         getCurrentGameMovies(cleanData);
         setIsLoading(false);
     };
@@ -86,35 +87,10 @@ export default function App() {
         setCurrentRoundMovies(currentMovies);
     };
 
-    const updateCurrentRoundMovies = () => {
-        const numbers: number[] = [];
-        const updatedCurrentRoundMovies: Movie[] = [...currentRoundMovies];
-
-        for (let i = 1; i <= currentGameMovies.length; i++) {
-            numbers.push(i);
-        }
-        const shuffledNumbers = _.shuffle(numbers);
-
-        for (
-            let i = 0;
-            updatedCurrentRoundMovies.length === currentRoundMovies.length;
-            i++
-        ) {
-            const targetId = shuffledNumbers[i];
-            const targetMovie = currentRoundMovies.some(
-                (movie) => movie.id === targetId
-            );
-            if (targetMovie === false) {
-                const newMovie = currentGameMovies.find(
-                    (movie) => movie.id === targetId
-                );
-                if (newMovie !== undefined) {
-                    updatedCurrentRoundMovies.push(newMovie);
-                }
-            }
-        }
-        const shuffledMovies = _.shuffle(updatedCurrentRoundMovies);
-        setCurrentRoundMovies(shuffledMovies);
+    const handleSelection = (movie: Movie) => {
+        selectMovie(movie);
+        randomizeCurrentRoundMovies();
+        updateCurrentScore();
     };
 
     const selectMovie = (selection: Movie) => {
@@ -131,11 +107,44 @@ export default function App() {
         }
     };
 
+    const randomizeCurrentRoundMovies = () => {
+        const movies = currentRoundMovies;
+        const randomizedMovies = _.shuffle(movies);
+        setCurrentRoundMovies(randomizedMovies);
+    };
+
+    const updateCurrentScore = () => {
+        const pointValue = 100;
+        setCurrentScore((prev) => prev + pointValue);
+    };
+
     const nextRound = () => {
         setRound((prevState) => prevState + 1);
         updateCurrentRoundMovies();
         setCurrentlySelectedMovies([]);
         console.log('round incremented');
+    };
+
+    const updateCurrentRoundMovies = () => {
+        const updatedCurrentRoundMovies = [...currentRoundMovies];
+
+        const availableMovies = currentGameMovies.filter(
+            (movie) => !updatedCurrentRoundMovies.some((m) => m.id === movie.id)
+        );
+
+        if (availableMovies.length > 0) {
+            const randomIndex = Math.floor(
+                Math.random() * availableMovies.length
+            );
+            const randomMovie = availableMovies[randomIndex];
+            updatedCurrentRoundMovies.push(randomMovie);
+            setCurrentRoundMovies(updatedCurrentRoundMovies);
+        }
+    };
+
+    const endGame = () => {
+        setRound(1);
+        setCurrentlySelectedMovies([]);
     };
 
     useEffect(() => {
@@ -151,24 +160,39 @@ export default function App() {
 
     useEffect(() => {
         if (gameOver === true) {
-            console.log('game over');
+            endGame();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameOver]);
 
     if (isLoading) return <div>Loading...</div>;
 
     return (
         <>
-            <Scorecard
-                currentScore={currentScore}
-                bestScore={bestScore}
-            ></Scorecard>
-            <RoundIndicator round={round} />
-            {currentRoundMovies.map((movie) => (
-                <div key={movie.id}>
-                    <Card selectMovie={selectMovie} movie={movie} />
+            {gameOver ? (
+                <div key="gameOver">
+                    <Scorecard
+                        currentScore={currentScore}
+                        bestScore={bestScore}
+                        gameOver={gameOver}
+                    ></Scorecard>
+                    <div>Game Over</div>
                 </div>
-            ))}
+            ) : (
+                <div key="gameActive">
+                    <Scorecard
+                        currentScore={currentScore}
+                        bestScore={bestScore}
+                        gameOver={gameOver}
+                    ></Scorecard>
+                    <RoundIndicator round={round} />
+                    {currentRoundMovies.map((movie) => (
+                        <div key={movie.id}>
+                            <Card selectMovie={handleSelection} movie={movie} />
+                        </div>
+                    ))}
+                </div>
+            )}
         </>
     );
 }

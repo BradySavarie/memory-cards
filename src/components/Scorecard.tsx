@@ -1,17 +1,18 @@
 import Timer from './Timer';
 
-interface Scorecard {
+interface ScorecardProps {
     currentScore: number;
     bestScore: number;
+    gameOver: boolean;
 }
 
-const Scorecard = (props: Scorecard) => {
+const Scorecard = (props: ScorecardProps) => {
     return (
         <div>
             <h1>Scorecard</h1>
             <p>Best: {props.bestScore}</p>
             <p>Current: {props.currentScore}</p>
-            <Timer />
+            {!props.gameOver && <Timer />}
         </div>
     );
 };
