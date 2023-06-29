@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Scorecard from './components/Scorecard';
 import RoundIndicator from './components/RoundIndicator';
 import Card from './components/Card';
+import { CircularProgress } from '@mui/material';
 
 export interface Movie {
     id: number;
@@ -80,8 +81,14 @@ export default function App() {
     const getCurrentRoundMovies = (movies: Movie[]) => {
         const currentMovies: Movie[] = [];
 
-        for (let i = 0; i <= round; i++) {
-            currentMovies.push(movies[i]);
+        if (gameOver) {
+            for (let i = 0; i <= 1; i++) {
+                currentMovies.push(movies[i]);
+            }
+        } else {
+            for (let i = 0; i <= round; i++) {
+                currentMovies.push(movies[i]);
+            }
         }
 
         setCurrentRoundMovies(currentMovies);
@@ -145,9 +152,9 @@ export default function App() {
     };
 
     const startNewGame = () => {
-        getCurrentGameMovies(rawMovieData);
         setCurrentScore(0);
         setRound(1);
+        getCurrentGameMovies(rawMovieData);
         setCurrentlySelectedMovies([]);
         setGameOver(false);
     };
@@ -163,7 +170,12 @@ export default function App() {
         }
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading)
+        return (
+            <div>
+                <CircularProgress />
+            </div>
+        );
 
     return (
         <>
