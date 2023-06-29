@@ -101,7 +101,7 @@ export default function App() {
                 ...prevState,
                 selection,
             ]);
-            updateCurrentScore();
+            updateScores();
         } else {
             setGameOver(true);
         }
@@ -113,16 +113,18 @@ export default function App() {
         setCurrentRoundMovies(randomizedMovies);
     };
 
-    const updateCurrentScore = () => {
+    const updateScores = () => {
         const pointValue = 100;
         setCurrentScore((prev) => prev + pointValue);
+        if (bestScore <= currentScore + pointValue) {
+            setBestScore(currentScore + pointValue);
+        }
     };
 
     const nextRound = () => {
         setRound((prevState) => prevState + 1);
         updateCurrentRoundMovies();
         setCurrentlySelectedMovies([]);
-        console.log('round incremented');
     };
 
     const updateCurrentRoundMovies = () => {
