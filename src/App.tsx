@@ -14,7 +14,7 @@ export interface Movie {
 export default function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [round, setRound] = useState<number>(1);
-    const [cleanMovieData, setCleanMovieData] = useState<Movie[]>([]);
+    const [rawMovieData, setRawMovieData] = useState<Movie[]>([]);
     const [currentGameMovies, setCurrentGameMovies] = useState<Movie[]>([]);
     const [currentRoundMovies, setCurrentRoundMovies] = useState<Movie[]>([]);
     const [currentScore, setCurrentScore] = useState<number>(0);
@@ -28,7 +28,7 @@ export default function App() {
         const resp = await fetch('https://api.sampleapis.com/movies/classic');
         const json = await resp.json();
         const cleanData = await cleanMoviesData(json);
-        setCleanMovieData(cleanData);
+        setRawMovieData(cleanData);
         getCurrentGameMovies(cleanData);
         setIsLoading(false);
     };
@@ -90,7 +90,6 @@ export default function App() {
     const handleSelection = (movie: Movie) => {
         selectMovie(movie);
         randomizeCurrentRoundMovies();
-        updateCurrentScore();
     };
 
     const selectMovie = (selection: Movie) => {
@@ -102,6 +101,7 @@ export default function App() {
                 ...prevState,
                 selection,
             ]);
+            updateCurrentScore();
         } else {
             setGameOver(true);
         }
@@ -142,9 +142,12 @@ export default function App() {
         }
     };
 
-    const endGame = () => {
+    const startNewGame = () => {
+        getCurrentGameMovies(rawMovieData);
+        setCurrentScore(0);
         setRound(1);
         setCurrentlySelectedMovies([]);
+        setGameOver(false);
     };
 
     useEffect(() => {
@@ -158,13 +161,6 @@ export default function App() {
         }
     });
 
-    useEffect(() => {
-        if (gameOver === true) {
-            endGame();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gameOver]);
-
     if (isLoading) return <div>Loading...</div>;
 
     return (
@@ -177,6 +173,7 @@ export default function App() {
                         gameOver={gameOver}
                     ></Scorecard>
                     <div>Game Over</div>
+                    <button onClick={startNewGame}>Play Again</button>
                 </div>
             ) : (
                 <div key="gameActive">
