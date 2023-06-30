@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import Scorecard from './components/Scorecard';
 import RoundIndicator from './components/RoundIndicator';
-import Card from './components/Card';
-import { CircularProgress } from '@mui/material';
+import { MovieCard } from './components/MovieCard';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CircularProgress, Button, Box } from '@mui/material';
+import { Grid } from '@mui/material';
 
 export interface Movie {
     id: number;
@@ -173,12 +175,20 @@ export default function App() {
     if (isLoading)
         return (
             <div>
-                <CircularProgress />
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="100vh"
+                >
+                    <CircularProgress />
+                </Box>
             </div>
         );
 
     return (
         <>
+            <CssBaseline />
             {gameOver ? (
                 <div key="gameOver">
                     <Scorecard
@@ -187,7 +197,9 @@ export default function App() {
                         gameOver={gameOver}
                     ></Scorecard>
                     <div>Game Over</div>
-                    <button onClick={startNewGame}>Play Again</button>
+                    <Button variant="contained" onClick={startNewGame}>
+                        Play Again
+                    </Button>
                 </div>
             ) : (
                 <div key="gameActive">
@@ -197,11 +209,17 @@ export default function App() {
                         gameOver={gameOver}
                     ></Scorecard>
                     <RoundIndicator round={round} />
-                    {currentRoundMovies.map((movie) => (
-                        <div key={movie.id}>
-                            <Card selectMovie={handleSelection} movie={movie} />
-                        </div>
-                    ))}
+
+                    <Grid container spacing={4} justifyContent="center">
+                        {currentRoundMovies.map((movie) => (
+                            <Grid item key={movie.id}>
+                                <MovieCard
+                                    selectMovie={handleSelection}
+                                    movie={movie}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
                 </div>
             )}
         </>
