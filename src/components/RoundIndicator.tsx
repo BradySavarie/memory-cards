@@ -1,12 +1,16 @@
+import { Typography } from '@mui/material';
+
 interface RoundIndicatorProps {
     round: number;
 }
 
 const RoundIndicator = (props: RoundIndicatorProps) => {
     return (
-        <div>
-            <p>Round: {props.round}</p>
-        </div>
+        <>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Round {props.round}
+            </Typography>
+        </>
     );
 };
 
