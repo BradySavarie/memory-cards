@@ -26,10 +26,10 @@ const Scorecard = (props: ScorecardProps) => {
                     alignItems="center"
                 >
                     <Typography variant="body2">
-                        <strong>Best:</strong> {props.bestScore}
+                        Best: {props.bestScore}
                     </Typography>
                     <Typography variant="body2">
-                        <strong>Current:</strong> {props.currentScore}
+                        Current: {props.currentScore}
                     </Typography>
                 </Box>
                 {!props.gameOver && <Timer />}

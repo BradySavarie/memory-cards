@@ -7,9 +7,7 @@ interface RoundIndicatorProps {
 const RoundIndicator = (props: RoundIndicatorProps) => {
     return (
         <>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Round {props.round}
-            </Typography>
+            <Typography variant="h5">Round {props.round}</Typography>
         </>
     );
 };
