@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { Container, createTheme, ThemeProvider } from '@mui/material';
 import _ from 'lodash';
 import CssBaseline from '@mui/material/CssBaseline';
-import GlobalStyles from './components/GlobalStyles';
 import { CircularProgress, Button, Box, Grid } from '@mui/material';
-import RoundIndicator from './components/RoundIndicator';
 import { MovieCard } from './components/MovieCard';
-import { Header } from './components/Header';
+import Scorecard from './components/Scorecard';
 
 const theme = createTheme({
     typography: {
@@ -174,7 +172,9 @@ export default function App() {
     }, []);
 
     useEffect(() => {
-        if (round < currentlySelectedMovies.length) {
+        if (gameOver) {
+            startNewGame();
+        } else if (round < currentlySelectedMovies.length) {
             nextRound();
         }
     });
@@ -195,54 +195,36 @@ export default function App() {
 
     return (
         <>
-            <CssBaseline />
-            <GlobalStyles />
-            {gameOver ? (
-                <div key="gameOver">
-                    <ThemeProvider theme={theme}>
-                        <Header
-                            currentScore={currentScore}
-                            bestScore={bestScore}
-                            gameOver={gameOver}
-                        />
-                        <div>Game Over</div>
-                        <Button variant="contained" onClick={startNewGame}>
-                            Play Again
-                        </Button>
-                    </ThemeProvider>
-                </div>
-            ) : (
-                <div key="gameActive">
-                    <ThemeProvider theme={theme}>
-                        <Header
-                            currentScore={currentScore}
-                            bestScore={bestScore}
-                            gameOver={gameOver}
-                        />
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Container
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '100vh',
+                    }}
+                >
+                    <Scorecard
+                        currentScore={currentScore}
+                        bestScore={bestScore}
+                        gameOver={gameOver}
+                        round={round}
+                    />
 
-                        <Box
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            gap="20px"
-                        >
-                            <RoundIndicator round={round} />
-
-                            <Grid container spacing={6} justifyContent="center">
-                                {currentRoundMovies.map((movie) => (
-                                    <Grid item key={movie.id}>
-                                        <MovieCard
-                                            selectMovie={handleSelection}
-                                            movie={movie}
-                                        />
-                                    </Grid>
-                                ))}
+                    <Grid container spacing={6} justifyContent="center">
+                        {currentRoundMovies.map((movie) => (
+                            <Grid item key={movie.id}>
+                                <MovieCard
+                                    selectMovie={handleSelection}
+                                    movie={movie}
+                                />
                             </Grid>
-                        </Box>
-                    </ThemeProvider>
-                </div>
-            )}
+                        ))}
+                    </Grid>
+                </Container>
+            </ThemeProvider>
         </>
     );
 }

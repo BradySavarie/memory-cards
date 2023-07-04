@@ -1,29 +1,25 @@
-import Timer from './Timer';
-import { Box, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 
 interface ScorecardProps {
     currentScore: number;
     bestScore: number;
     gameOver: boolean;
+    round: number;
 }
 
 const Scorecard = (props: ScorecardProps) => {
     return (
         <>
-            <Box display="flex" flexDirection="column" alignItems="center">
-                <Typography
-                    variant="h6"
-                    sx={{
-                        fontWeight: 'bold',
-                    }}
-                >
-                    Scorecard
+            <Container>
+                <Typography variant="h5" sx={{ textAlign: 'center', my: 1 }}>
+                    Round {props.round}
                 </Typography>
                 <Box
                     display="flex"
                     gap="20px"
                     justifyContent="center"
                     alignItems="center"
+                    marginBottom={2}
                 >
                     <Typography variant="body2">
                         Best: {props.bestScore}
@@ -32,8 +28,7 @@ const Scorecard = (props: ScorecardProps) => {
                         Current: {props.currentScore}
                     </Typography>
                 </Box>
-                {!props.gameOver && <Timer />}
-            </Box>
+            </Container>
         </>
     );
 };

@@ -17,7 +17,7 @@ export const MovieCard = (props: CardProps) => {
 
     return (
         <>
-            <Card variant="outlined" sx={{ maxWidth: 300 }}>
+            <Card variant="elevation" elevation={3} sx={{ maxWidth: 300 }}>
                 <CardActionArea onClick={handleClick}>
                     <CardMedia
                         component="img"
