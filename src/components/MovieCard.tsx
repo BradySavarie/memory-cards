@@ -17,7 +17,11 @@ export const MovieCard = (props: CardProps) => {
 
     return (
         <>
-            <Card variant="elevation" elevation={3} sx={{ maxWidth: 300 }}>
+            <Card
+                variant="elevation"
+                elevation={3}
+                sx={{ maxWidth: 300, height: 425 }}
+            >
                 <CardActionArea onClick={handleClick}>
                     <CardMedia
                         component="img"
@@ -25,7 +29,7 @@ export const MovieCard = (props: CardProps) => {
                         height="350"
                         alt="Movie Poster"
                     />
-                    <CardContent>
+                    <CardContent sx={{ height: 75 }}>
                         <Typography
                             variant="subtitle1"
                             color="text.primary"

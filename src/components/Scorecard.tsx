@@ -11,7 +11,10 @@ const Scorecard = (props: ScorecardProps) => {
     return (
         <>
             <Container>
-                <Typography variant="h5" sx={{ textAlign: 'center', my: 1 }}>
+                <Typography
+                    variant="h5"
+                    sx={{ textAlign: 'center', mb: 1, mt: 5 }}
+                >
                     Round {props.round}
                 </Typography>
                 <Box
@@ -19,7 +22,7 @@ const Scorecard = (props: ScorecardProps) => {
                     gap="20px"
                     justifyContent="center"
                     alignItems="center"
-                    marginBottom={2}
+                    marginBottom={5}
                 >
                     <Typography variant="body2">
                         Best: {props.bestScore}

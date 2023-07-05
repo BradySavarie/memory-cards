@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Container, createTheme, ThemeProvider } from '@mui/material';
+import {
+    AppBar,
+    Container,
+    createTheme,
+    ThemeProvider,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import _ from 'lodash';
 import CssBaseline from '@mui/material/CssBaseline';
-import { CircularProgress, Button, Box, Grid } from '@mui/material';
+import { CircularProgress, Box, Grid } from '@mui/material';
 import { MovieCard } from './components/MovieCard';
 import Scorecard from './components/Scorecard';
 
@@ -203,9 +210,21 @@ export default function App() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '100vh',
                     }}
                 >
+                    <AppBar
+                        sx={{
+                            bgcolor: theme.palette.error.dark,
+                        }}
+                    >
+                        <Toolbar sx={{ justifyContent: 'center' }}>
+                            <Typography variant={'h5'}>
+                                Classic Movies Memory Game
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+
+                    <Box sx={{ minHeight: `${theme.spacing(6)}` }}></Box>
                     <Scorecard
                         currentScore={currentScore}
                         bestScore={bestScore}
@@ -213,7 +232,11 @@ export default function App() {
                         round={round}
                     />
 
-                    <Grid container spacing={6} justifyContent="center">
+                    <Grid
+                        container
+                        spacing={6}
+                        sx={{ justifyContent: 'center', mb: 5 }}
+                    >
                         {currentRoundMovies.map((movie) => (
                             <Grid item key={movie.id}>
                                 <MovieCard
