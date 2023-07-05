@@ -188,7 +188,7 @@ export default function App() {
 
     if (isLoading)
         return (
-            <div>
+            <>
                 <Box
                     display="flex"
                     justifyContent="center"
@@ -197,7 +197,7 @@ export default function App() {
                 >
                     <CircularProgress />
                 </Box>
-            </div>
+            </>
         );
 
     return (
