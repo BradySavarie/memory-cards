@@ -1,3 +1,4 @@
+import data from './data/movies.json';
 import { useEffect, useState } from 'react';
 import {
     AppBar,
@@ -40,9 +41,7 @@ export default function App() {
     const [gameOver, setGameOver] = useState<boolean>(false);
 
     const initMovieData = async () => {
-        const resp = await fetch('https://api.sampleapis.com/movies/classic');
-        const json = await resp.json();
-        const cleanData = await cleanMoviesData(json);
+        const cleanData = await cleanMoviesData(data);
         setRawMovieData(cleanData);
         getCurrentGameMovies(cleanData);
         setIsLoading(false);
