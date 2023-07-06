@@ -6,6 +6,6 @@
 
 <em>Memory Cards is an application that tests the users ability to remember a sequence of actions. It pulls classic movies data from an API to display popular posters and their titles on clickable cards. The goal is to avoid selecting the same card twice in a single round while the cards shuffle positions. The difficulty ramps up as a new card is added each time the round increments. Challenge yourself by aiming to beat your own best score!</em>
 
-Live Link: 
+Live Link: https://bradysavarie.github.io/memory-cards/
 
 <hr>
