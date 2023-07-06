@@ -20,3 +20,6 @@ This application is a part of The Odin Projects Full-Stack Javascript curriculum
   <li>Styled-Components
   <li>Vite
  </ul>
+
+* NOTE *
+The API endpoint used for this project has unfortunately been made unavailable. Luckily I found the data and stored it as a json object within the repository as opposed to fetching it. The code has been adjusted to use this object instead and should function as normal.
