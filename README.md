@@ -9,3 +9,14 @@
 Live Link: https://bradysavarie.github.io/memory-cards/
 
 <hr>
+
+This application is a part of The Odin Projects Full-Stack Javascript curriculum and was developed with the purpose of learning React hooks and functional components. The main challenges I faced were learning how to work with useEffect, write asyncronous code in React, and use MaterialUI to style the application.
+
+<h3>Built With:</h3>
+
+<ul>
+  <li>React
+  <li>MaterialUI
+  <li>Styled-Components
+  <li>Vite
+ </ul>
